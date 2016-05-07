@@ -29,11 +29,10 @@
     <Content Include="Pictures\bg2.png" />
     <Content Include="Pictures\bullet.png" />
     <Content Include="Pictures\deep-space.jpg" />
-    <Content Include="Pictures\eg.jpg" />
+    <Content Include="Pictures\enemy-bullet.png" />
     <Content Include="Pictures\enemy.png" />
-    <Content Include="Pictures\enemy2.jpg.jpg" />
     <Content Include="Pictures\enemy3.png" />
-    <Content Include="Pictures\MarioSprite_.png" />
+    <Content Include="Pictures\explode.png" />
     <Content Include="Pictures\phaser-dude.png" />
     <Content Include="Pictures\player.png" />
     <Content Include="Pictures\ship.png" />
@@ -41,7 +40,6 @@
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Pictures\MarioSprite_.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
