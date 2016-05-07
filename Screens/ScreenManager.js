@@ -38,19 +38,17 @@ var mainState=
             bullets.enableBody = true;
             bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
+            ///enemy ile aynı tanımlandı
             enemyBullet = game.add.group();
             enemyBullet.enableBody = true;
             enemyBullet.physicsBodyType = Phaser.Physics.ARCADE;
-
-
-
 
             enemies = game.add.group();
             enemies.enableBody = true;
             enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
             createEnemies();
-            yaratEnemiesBomb();
+            yaratEnemiesBomb();//enemy-bullet yaratıldı
 
             scoreString = 'Score : ';
             scoreText = game.add.text(10, 10, 'Puan: ', { font: '14px Courier New', fill: '#fff' });
@@ -84,8 +82,10 @@ var mainState=
         update: function ()
            
         {
-            game.physics.arcade.overlap(bullets, enemies, collisionHandler, null, this);
-            game.physics.arcade.overlap(bullets, enemyBullet, enemyHitsPlayer, null, this);
+            //gönderdiğim bullet eğer enemyBullet'e çarparsa oyuncu kaybetsin istiyorum
+            game.physics.arcade.overlap(bullets, enemyBullet, enemyHitsPlayer, null, this); //buraya düşmüyor 
+            game.physics.arcade.overlap(bullets, enemies, collisionHandler, null, this); //collisionHandler'e dusuyor yani hepsini enemies olarak algılıyor
+           
             player.body.velocity.x = 0;
             spacefield.tilePosition.y += background;
             if(cursors.left.isDown)
@@ -182,11 +182,11 @@ function descend() {
 }
 
 
-
+///BU FONKSIYONDA SORUN?
 function yaratEnemiesBomb() {
     for (var y = 0; y < 4; y++) {
         for (var x = 0; x < 11; x++) {
-            var enemy = enemies.create(x * 50, y * 50, 'enemyBullet');  //enemyler arasındaki boşluklar
+            var enemy = enemies.create(x * 50, y * 50, 'enemyBullet');  //enemylerBulletler  arasındaki boşluklar
             enemy.anchor.setTo(0.5, 0.5);
         }
     }
@@ -206,18 +206,14 @@ function collisionHandler(bullet,enemy)
     console.log("handler");
 }
 
-function enemyHitsPlayer(player,enemyBullet) {
+//HOCAM BU FONKSIYONA BIR DUSURTEMEDIM
+function enemyHitsPlayer(bullet,enemyBullet) {
     console.log("handler2");
     enemyBullet.kill();
-    player.kill();
+    player.kill(); //PLAYER OLSUN ISTIYORUM
 
 
 }
-
-
-
-
-
 
 game.state.add('mainState', mainState);
 game.state.start('mainState');
