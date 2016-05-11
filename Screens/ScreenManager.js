@@ -15,7 +15,9 @@ var winText;
 var lives;
 var enemyBullet;
 var firingTimer = 0;
-var livingEnemies = [];
+var dondur;
+var music;
+
 var mainState=
     {
         preload: function () {
@@ -24,6 +26,7 @@ var mainState=
             game.load.image('bullets', 'Pictures/bullet.png'); //döndürülmüş kırmızı bullet
             game.load.image('enemy', 'Pictures/enemy3.png');
             game.load.image('enemyBullet', 'Pictures/enemy-bullet.png');
+            game.load.audio('boden', 'Pictures/gameover.mp3');
         },
         create: function () {
             spacefield = game.add.tileSprite(0, 0, 800, 600, 'bg');
@@ -44,10 +47,7 @@ var mainState=
             bullets.setAll('checkWorldBounds', true);
             fireButton= game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 
-            ///BURUNLAR enemyBULLET
-            enemyBullet = game.add.group();
-            enemyBullet.enableBody = true;
-            enemyBullet.physicsBodyType = Phaser.Physics.ARCADE;
+            
 
             ///GHOSTLAR
             enemies = game.add.group();
@@ -55,9 +55,16 @@ var mainState=
             enemies.physicsBodyType = Phaser.Physics.ARCADE;
 
             createEnemies();
-            yaratEnemiesBomb();//enemy-bullet yaratıldı
 
-            scoreString = 'Score : ';
+
+
+            ///BURUNLAR enemy-bullet yaratıldı burun olması için alt satırda ekledim
+            enemyBullet = game.add.group();
+            enemyBullet.enableBody = true;
+            enemyBullet.physicsBodyType = Phaser.Physics.ARCADE;
+
+
+
             scoreText = game.add.text(10, 10, 'Puan: ', { font: '14px Courier New', fill: '#fff' });
             winText = game.add.text(game.world.centerX, game.world.centerY, 'You won!!!', { font: '14px Courier New', fill: '#fff' });
             winText.visible = false;
@@ -71,9 +78,11 @@ var mainState=
                 b.checkWorldBounds = true;
                 b.events.onOutOfBounds.add(resetBullet, this);
             }
+            yaratEnemiesBomb();
+
+           
 
         },
-
         update: function ()
            
         {
@@ -118,29 +127,38 @@ var mainState=
                     player.body.velocity.y = -500;
                 }
             }
-
             if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
                 fireBullet();
-                
             }
-            game.physics.arcade.overlap(bullets, enemies, collisionHandler, null, this); //collisionHandler'e dusuyor yani hepsini enemies olarak algılıyor
+
             game.physics.arcade.overlap(bullets, enemyBullet, enemyHitsPlayer, null, this); //buraya düşmüyor 
+            game.physics.arcade.overlap(bullets, enemies, collisionHandler, null, this); //collisionHandler'e dusuyor yani hepsini enemies olarak algılıyor
+
         }
     }
 
-
 function collisionHandler(bullets, enemies) {
-    console.log("collisionHandler'a dustu");
     bullets.kill();
     enemies.kill();
     score += 1;
+    if (score == 44) {
+        winText.visible = true;
+        score.visible = false;
+       
+    }
 
 }
 
-//HOCAM BU FONKSIYONA BIR DUSURTEMEDIM
 function enemyHitsPlayer(bullets, enemyBullet) {
-    console.log("player ölsünnn");
-    
+    music = game.add.audio('boden');
+    music.onDecoded.add(start, this);
+    enemyBullet.kill();
+    player.kill();
+
+    winText = game.add.text(game.world.centerX, game.world.centerY, 'KAYBETTIN!\nTEKRAR BAŞLAMAK İÇİN\nTIKLAT', { font: '24px Courier New', fill: '#fff' });
+    winText.visible = true;
+    game.input.onTap.addOnce(restart, this);
+  
 }
 
 function fireBullet()
@@ -152,22 +170,18 @@ function fireBullet()
             bullet.reset(player.x + 6, player.y - 8);
             bullet.body.velocity.y = -500; //speed'i
             bulletTime = game.time.now + 150;
+            dondur=0;
+            return dondur;
         }
     }
-    scoreText.text = 'Vurdun!';
+   
     scoreText.text = 'Puan: ' + score;
-    if(score==44)
-    {
-        winText.visible = true;
-        score.visible = false;
-        createEnemies();
-        
-    }
+   
 }
 
 function resetBullet(bullet) {
 
-    bullet.kill();
+    bullets.kill();
 }
 
 function createEnemies() {
@@ -188,20 +202,41 @@ function descend() {
     enemies.y += 10;
 }
 
-///BU FONKSIYONDA SORUN?
+function restart()
+{
+    winText.visible = false;
+    createEnemies();
+    yaratEnemiesBomb();
+    recreateShip();
+    score = 0;
+}
+
+function recreateShip()
+{
+    player = game.add.sprite(300, 450, 'ship');
+    game.physics.enable(player, Phaser.Physics.ARCADE);
+}
+
+
 function yaratEnemiesBomb() {
     for (var y = 0; y < 4; y++) {
         for (var x = 0; x < 11; x++) {
-            var enemy = enemies.create(x * 50, y * 50, 'enemyBullet');  //enemylerBulletler  arasındaki boşluklar
+            var enemy = enemyBullet.create(x * 50, y * 50, 'enemyBullet');  //enemylerBulletler  arasındaki boşluklar
             enemy.anchor.setTo(0.5, 0.5);
         }
     }
-    enemies.x = 100;
-    enemies.y = 50;
+    enemyBullet.x = 100;
+    enemyBullet.y = 50;
 
-    var tween = game.add.tween(enemies).to({ x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
+    var tween = game.add.tween(enemyBullet).to({ x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
     tween.onLoop.add(descend, this);
 }//function createEnemies finish there
+
+function start() {
+
+    music.fadeIn(9000);
+
+}
 
 game.state.add('mainState', mainState);
 game.state.start('mainState');

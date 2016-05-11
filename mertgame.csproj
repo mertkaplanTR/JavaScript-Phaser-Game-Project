@@ -33,6 +33,7 @@
     <Content Include="Pictures\enemy.png" />
     <Content Include="Pictures\enemy3.png" />
     <Content Include="Pictures\explode.png" />
+    <Content Include="Pictures\gameover.mp3" />
     <Content Include="Pictures\phaser-dude.png" />
     <Content Include="Pictures\player.png" />
     <Content Include="Pictures\ship.png" />
