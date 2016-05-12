@@ -37,6 +37,7 @@
     <Content Include="Pictures\phaser-dude.png" />
     <Content Include="Pictures\player.png" />
     <Content Include="Pictures\ship.png" />
+    <Content Include="Pictures\tiger.mp3" />
     <Content Include="Screens\ScreenManager.js" />
     <Content Include="web.config" />
   </ItemGroup>

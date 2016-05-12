@@ -27,6 +27,7 @@ var mainState=
             game.load.image('enemy', 'Pictures/enemy3.png');
             game.load.image('enemyBullet', 'Pictures/enemy-bullet.png');
             game.load.audio('boden', 'Pictures/gameover.mp3');
+            game.load.audio('tiger', 'Pictures/tiger.mp3');
         },
         create: function () {
             spacefield = game.add.tileSprite(0, 0, 800, 600, 'bg');
@@ -79,7 +80,8 @@ var mainState=
                 b.events.onOutOfBounds.add(resetBullet, this);
             }
             yaratEnemiesBomb();
-
+            music = game.add.audio('tiger');
+            music.onDecoded.add(start, this);
            
 
         },
@@ -234,7 +236,7 @@ function yaratEnemiesBomb() {
 
 function start() {
 
-    music.fadeIn(9000);
+    music.fadeIn(0);
 
 }
 
